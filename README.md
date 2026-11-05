@@ -39,38 +39,7 @@ a buzzer alarm and a 16x2 LCD, all on bare-metal C with layered, reusable driver
 
 ## System Overview
 
-```mermaid
-flowchart LR
-    subgraph Inputs
-        LDR["LDR<br/>(Light)"]
-        LM35["LM35<br/>(Temperature)"]
-        FLAME["Flame Sensor"]
-    end
-
-    subgraph MCU["ATmega32 @ 16 MHz"]
-        ADC["ADC<br/>10-bit, 2.56 V ref"]
-        GPIO["GPIO"]
-        PWM["Timer0<br/>Fast PWM"]
-        APP["Application<br/>(SmartHome.c)"]
-    end
-
-    subgraph Outputs
-        LEDS["RGB LEDs"]
-        FAN["DC Motor (Fan)<br/>via H-Bridge"]
-        BUZ["Buzzer"]
-        LCD["16x2 LCD"]
-    end
-
-    LDR --> ADC
-    LM35 --> ADC
-    FLAME --> GPIO
-    ADC --> APP
-    GPIO --> APP
-    APP --> LEDS
-    APP --> PWM --> FAN
-    APP --> BUZ
-    APP --> LCD
-```
+<p align="center"><img src="docs/system_overview.png" alt="System overview" width="720"></p>
 
 ---
 
@@ -217,22 +186,7 @@ When the flame sensor output goes **HIGH**:
 
 ### Main loop
 
-```mermaid
-flowchart TD
-    A[Initialize drivers] --> S[Show start-up message<br/>for 1 second]
-    S --> B[Read LDR and LM35]
-    B --> C[Read flame sensor]
-    C --> D{Flame detected?}
-    D -- Yes --> E[Stop fan, buzzer ON,<br/>show alert]
-    E --> F{Flame cleared?}
-    F -- No --> F
-    F -- Yes --> G[Buzzer OFF, clear LCD]
-    G --> B
-    D -- No --> H[Update LCD]
-    H --> I[Update RGB LEDs]
-    I --> J[Update fan speed]
-    J --> B
-```
+<p align="center"><img src="docs/main_loop.png" alt="Main loop flowchart" width="720"></p>
 
 ---
 
@@ -269,7 +223,8 @@ flowchart TD
 ## Project Structure
 
 ```
-SMART_HOME/
+SMART__HOME__AUTOMATION/
+├── docs/                # Diagrams used in this README
 ├── SmartHome.c          # Application: main loop and control logic
 │
 ├── gpio.c / gpio.h      # MCAL: GPIO driver
@@ -309,10 +264,14 @@ SMART_HOME/
 
 **Steps**
 
-1. Import the project into Eclipse: *File → Import → Existing Projects into Workspace*.
-2. Check *Project → Properties → AVR → Target Hardware*: **ATmega32**, **16000000 Hz**.
-3. Build the project; the output `SMART_HOME.hex` is generated in the `Debug/` folder.
-4. Flash the hex file with AVRDUDE, or load it into the ATmega32 in Proteus with the clock set to 16 MHz.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/mahmoudahmed-ece/SMART__HOME__AUTOMATION.git
+   ```
+2. Import it into Eclipse: *File → Import → Existing Projects into Workspace*.
+3. Check *Project → Properties → AVR → Target Hardware*: **ATmega32**, **16000000 Hz**.
+4. Build the project; the output `SMART_HOME.hex` is generated in the `Debug/` folder.
+5. Flash the hex file with AVRDUDE, or load it into the ATmega32 in Proteus with the clock set to 16 MHz.
 
 ---
 
